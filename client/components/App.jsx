@@ -18,7 +18,7 @@ class Item extends React.Component{
 
 
     state = {
-        underlined:false,
+        done:false,
         name:this.props.name
       };
 
@@ -26,11 +26,17 @@ class Item extends React.Component{
       console.log(this.state.name);
       this.props.onDelete(this.state.name);
     };
+    onCheckboxCliked = (ev,isChecked)=>{
+        this.setState(prevState =>({done: isChecked}),()=>console.log(isChecked));
+    };
     render(){
         return (
 
            
-            <ListItem primaryText={this.props.name} leftCheckbox={<Checkbox />} rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
+            <ListItem primaryText={this.props.name} 
+                style={this.state.done?{textDecoration:'line-through'}:{}}
+                 leftCheckbox={<Checkbox onCheck={this.onCheckboxCliked} />} 
+                 rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
          
    );
     }
