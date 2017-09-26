@@ -18,7 +18,20 @@ import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
 //material-ui Icons
 import ActionDelete from 'material-ui/svg-icons/action/delete';
+import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
+import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
+import {red500, yellow500, blue500} from 'material-ui/styles/colors';
 
+const selectedItemStyle ={
+    'text-decoration':'line-through',
+    color:'rgba(1,1,1,0.5)',
+    'font-size':'2em'
+};
+const unSelectedItemStyle ={
+    'text-decoration':'none',
+    color:'rgba(1,1,1,1)',
+    'font-size':'2em'
+};
 
 
 class Item extends React.Component{
@@ -40,10 +53,10 @@ class Item extends React.Component{
     render(){
         return (           
             <ListItem primaryText={this.props.name} 
-            style={this.props.done?{textDecoration:'line-through'}:{}}
-            leftCheckbox={<Checkbox checked={this.props.done} 
+            style={this.props.done?selectedItemStyle:unSelectedItemStyle}
+            leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
-            rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
+            rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} onClick={this.onDelete}/>} />
          
         );
     }
@@ -87,12 +100,12 @@ class  ItemList extends React.Component{
     }
     render() {
     return (
-      <Grid fluid>       
+      <Grid  >       
         <Form onSubmit={this.addNewitem}/>
-        <Row>
-            <Col  xsOffset={4} xs={4} mdOffset={4} md={4}>
+        <Row center={'xs'} >
+            <Col  xs={5}>
                 <MuiThemeProvider >
-                    <List>            
+                    <List  >            
                         {
                         this.state.items.length>0?
                         this.state.items.map((item,i) => <Item 
@@ -125,10 +138,10 @@ class Form extends React.Component{
     render(){    
         return(
         <Row center='xs'>
-            <Col   xs={6} >
+            <Col  xs={5} >
                 <MuiThemeProvider >
-                    <form onSubmit={this.handleSubmit}>
-                        <TextField value={this.state.item}
+                    <form  onSubmit={this.handleSubmit}>
+                        <TextField fullWidth value={this.state.item}
                         onChange={(event)=>this.setState({item:event.target.value})}
                         hintText="Holis"
                         floatingLabelText="Introduce aqui algo por hacer"
