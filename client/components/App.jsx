@@ -1,67 +1,69 @@
+//libs
 import React from 'react';
 import _ from 'underscore'
+//grid
 import { Grid, Row, Col } from 'react-flexbox-grid';
-import RaisedButton from 'material-ui/RaisedButton';
-import TextField from 'material-ui/TextField';
+//material-ui themes
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
+//material-ui components
+import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
+import TextField from 'material-ui/TextField';
 import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
+//material-ui Icons
 import ActionDelete from 'material-ui/svg-icons/action/delete';
-import FlatButton from 'material-ui/FlatButton';
+
+
+
 class Item extends React.Component{
-
-
 
     state = {
         done:this.props.done,
         id:this.props.id,
         name:this.props.name
-      };
+    };
 
-      onDelete = (ev)=>{
-      console.log(this.state.id);
-      this.props.onDelete(this.state.id);
+    onDelete = (ev)=>{
+        console.log(this.state.id);
+        this.props.onDelete(this.state.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
        this.props.itemStatusChanged(this.state.id);
     };
-    render(){
-        return (
 
-           
+    render(){
+        return (           
             <ListItem primaryText={this.props.name} 
-                style={this.props.done?{textDecoration:'line-through'}:{}}
-                 leftCheckbox={<Checkbox checked={this.props.done} onCheck={this.onCheckboxCliked} />} 
-                 rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
+            style={this.props.done?{textDecoration:'line-through'}:{}}
+            leftCheckbox={<Checkbox checked={this.props.done} 
+            onCheck={this.onCheckboxCliked} />} 
+            rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
          
-   );
+        );
     }
   
-
 }
 
 class  ItemList extends React.Component{
 
     state ={
-      items:[
-         
-        
-      ]
+      items:[]
     };
 
 
-    addNewitem= (name)=>{
-       
+    addNewitem= (name)=>{       
         this.setState({
             items: [...this.state.items, {name:name,done:false}]
         })
 
     };
+
     onDelete = (item)=>{
         this.setState(prevState =>({
            
@@ -85,22 +87,25 @@ class  ItemList extends React.Component{
     }
     render() {
     return (
-      <Grid fluid>
-       
+      <Grid fluid>       
         <Form onSubmit={this.addNewitem}/>
         <Row>
-          <Col  xsOffset={4} xs={4} mdOffset={4} md={4}>
-          <MuiThemeProvider >
-        <List>
-            
-            {
-                this.state.items.length>0?
-                this.state.items.map((item,i) => <Item itemStatusChanged={this.itemStatusChanged} done={item.done} onDelete={this.onDelete} id={i} key={i}  name={item.name}/>)
-                :<Subheader>Que hay que hacer?</Subheader>
-                }
-        </List>
-        </MuiThemeProvider >
-          </Col>
+            <Col  xsOffset={4} xs={4} mdOffset={4} md={4}>
+                <MuiThemeProvider >
+                    <List>            
+                        {
+                        this.state.items.length>0?
+                        this.state.items.map((item,i) => <Item 
+                            itemStatusChanged={this.itemStatusChanged} 
+                            done={item.done} onDelete={this.onDelete} 
+                            id={i} 
+                            key={i}  
+                            name={item.name}/>)
+                        :<Subheader>Que hay que hacer?</Subheader>
+                        }
+                    </List>
+                </MuiThemeProvider >
+            </Col>
         </Row>
       </Grid>
     );
@@ -109,36 +114,29 @@ class  ItemList extends React.Component{
     
 } ;
 class Form extends React.Component{
-    state={
-            item:''
-        }
-        handleSubmit = (event)=>{
-            event.preventDefault();
-            console.log(this.state.item);
-            this.props.onSubmit(this.state.item);
-            this.setState({item:''});
-        };
-    render(){    
-                return(
+    state={item:''}
 
+    handleSubmit = (event)=>{
+        event.preventDefault();
+        console.log(this.state.item);
+        this.props.onSubmit(this.state.item);
+        this.setState({item:''});
+    };
+    render(){    
+        return(
         <Row center='xs'>
             <Col   xs={6} >
-            <MuiThemeProvider >
-                <form onSubmit={this.handleSubmit}>
-                    <TextField value={this.state.item}
-                    onChange={(event)=>this.setState({item:event.target.value})}
-                    hintText="Holis"
-                    floatingLabelText="Introduce aqui algo por hacer"
-                    />  
-                </form>                 
-                </MuiThemeProvider>
-               
-     
-            </Col>
-            
+                <MuiThemeProvider >
+                    <form onSubmit={this.handleSubmit}>
+                        <TextField value={this.state.item}
+                        onChange={(event)=>this.setState({item:event.target.value})}
+                        hintText="Holis"
+                        floatingLabelText="Introduce aqui algo por hacer"
+                        />  
+                    </form>                 
+                </MuiThemeProvider>    
+            </Col>            
         </Row>
-
-
         );
     }
 }
