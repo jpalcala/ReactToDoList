@@ -19,12 +19,13 @@ class Item extends React.Component{
 
     state = {
         done:false,
+        id:this.props.id,
         name:this.props.name
       };
 
       onDelete = (ev)=>{
-      console.log(this.state.name);
-      this.props.onDelete(this.state.name);
+      console.log(this.state.id);
+      this.props.onDelete(this.state.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
         this.setState(prevState =>({done: isChecked}),()=>console.log(isChecked));
@@ -60,8 +61,8 @@ class  ItemList extends React.Component{
     onDelete = (item)=>{
         this.setState(prevState =>({
            
-            items: _.filter(prevState.items,(i)=>{
-                return i !== item;
+            items: _.filter(prevState.items,(i,n)=>{
+                return n !== item;
             })
             }));
     }
@@ -77,7 +78,7 @@ class  ItemList extends React.Component{
             
             {
                 this.state.items.length>0?
-                this.state.items.map((item,i) => <Item onDelete={this.onDelete} key={i}  name={item}/>)
+                this.state.items.map((item,i) => <Item onDelete={this.onDelete} id={i} key={i}  name={item}/>)
                 :<Subheader>Que hay que hacer?</Subheader>
                 }
         </List>
