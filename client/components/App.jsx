@@ -18,7 +18,7 @@ class Item extends React.Component{
 
 
     state = {
-        done:false,
+        done:this.props.done,
         id:this.props.id,
         name:this.props.name
       };
@@ -28,15 +28,15 @@ class Item extends React.Component{
       this.props.onDelete(this.state.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
-        this.setState(prevState =>({done: isChecked}),()=>console.log(isChecked));
+       this.props.itemStatusChanged(this.state.id);
     };
     render(){
         return (
 
            
             <ListItem primaryText={this.props.name} 
-                style={this.state.done?{textDecoration:'line-through'}:{}}
-                 leftCheckbox={<Checkbox onCheck={this.onCheckboxCliked} />} 
+                style={this.props.done?{textDecoration:'line-through'}:{}}
+                 leftCheckbox={<Checkbox checked={this.props.done} onCheck={this.onCheckboxCliked} />} 
                  rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
          
    );
@@ -49,13 +49,17 @@ class  ItemList extends React.Component{
 
     state ={
       items:[
+         
         
       ]
     };
 
 
     addNewitem= (name)=>{
-        this.setState(prevState =>({items: prevState.items.concat(name)}),()=>console.log(this.state.items));
+       
+        this.setState({
+            items: [...this.state.items, {name:name,done:false}]
+        })
 
     };
     onDelete = (item)=>{
@@ -65,6 +69,19 @@ class  ItemList extends React.Component{
                 return n !== item;
             })
             }));
+    }
+    itemStatusChanged = (item)=>{
+        this.setState(prevState =>({
+            
+             items:_.map(prevState.items,(val,i)=>{
+                 if(i==item)
+                 {
+                    val.done ? val.done=false: val.done=true;
+                 }
+                 
+                 return val;
+             })
+             }));
     }
     render() {
     return (
@@ -78,7 +95,7 @@ class  ItemList extends React.Component{
             
             {
                 this.state.items.length>0?
-                this.state.items.map((item,i) => <Item onDelete={this.onDelete} id={i} key={i}  name={item}/>)
+                this.state.items.map((item,i) => <Item itemStatusChanged={this.itemStatusChanged} done={item.done} onDelete={this.onDelete} id={i} key={i}  name={item.name}/>)
                 :<Subheader>Que hay que hacer?</Subheader>
                 }
         </List>
