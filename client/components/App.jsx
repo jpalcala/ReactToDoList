@@ -12,26 +12,77 @@ import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
-const Item = (props) =>{
+import FlatButton from 'material-ui/FlatButton';
+class Item extends React.Component{
 
-   return (
+
+
+    state = {
+        underlined:false,
+        name:this.props.name
+      };
+
+      onDelete = (ev)=>{
+      console.log(this.state.name);
+      this.props.onDelete(this.state.name);
+    };
+    render(){
+        return (
 
            
-            <ListItem primaryText={props.name} leftCheckbox={<Checkbox />} rightIconButton={<ActionDelete />} />
+            <ListItem primaryText={this.props.name} leftCheckbox={<Checkbox />} rightIconButton={<FlatButton  icon={<ActionDelete />} onClick={this.onDelete}/>} />
          
    );
+    }
+  
 
 }
 
-const ItemList = (props) =>{
+class  ItemList extends React.Component{
+
+    state ={
+      items:[
+        
+      ]
+    };
+
+
+    addNewitem= (name)=>{
+        this.setState(prevState =>({items: prevState.items.concat(name)}),()=>console.log(this.state.items));
+
+    };
+    onDelete = (item)=>{
+        this.setState(prevState =>({
+           
+            items: _.filter(prevState.items,(i)=>{
+                return i !== item;
+            })
+            }));
+    }
+    render() {
     return (
-        <MuiThemeProvider >
+      <Grid fluid>
+       
+        <Form onSubmit={this.addNewitem}/>
+        <Row>
+          <Col  xsOffset={4} xs={4} mdOffset={4} md={4}>
+          <MuiThemeProvider >
         <List>
-            <Subheader>Que hay que hacer?</Subheader>
-            {props.items.map((item,i) => <Item onDelete={props.onDelete} key={i} id={i} name={item}/>)}
+            
+            {
+                this.state.items.length>0?
+                this.state.items.map((item,i) => <Item onDelete={this.onDelete} key={i}  name={item}/>)
+                :<Subheader>Que hay que hacer?</Subheader>
+                }
         </List>
         </MuiThemeProvider >
+          </Col>
+        </Row>
+      </Grid>
     );
+  }
+  
+    
 } ;
 class Form extends React.Component{
     state={
@@ -70,36 +121,12 @@ class Form extends React.Component{
 
 
 class App extends React.Component {
-    state ={
-      items:[
-        
-      ]
-    };
+   
+  render(){
 
-
-    addNewitem= (name)=>{
-        this.setState(prevState =>({items: prevState.items.concat(name)}));
-    };
-    onDelete = (item)=>{
-        this.setState(prevState =>({
-           
-            items: _.filter(prevState.items,(i)=>{
-                return i !== item;
-            })
-            }));
-    }
-  render() {
     return (
-      <Grid fluid>
-       
-        <Form onSubmit={this.addNewitem}/>
-        <Row>
-          <Col  xsOffset={4} xs={4} mdOffset={4} md={4}>
-          <ItemList  onDelete={this.onDelete} items={this.state.items}/>
-          </Col>
-        </Row>
-      </Grid>
-    );
+        <ItemList/>
+    )
   }
 }
 
