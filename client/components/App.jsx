@@ -20,16 +20,16 @@ import Toggle from 'material-ui/Toggle';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
-import {red500, yellow500, blue500} from 'material-ui/styles/colors';
+import {red500, grey400, blue500} from 'material-ui/styles/colors';
 
 const selectedItemStyle ={
     textDecoration:'line-through',
-    color:'rgba(1,1,1,0.5)',
+    color:'rgba(0,0,0,0.5)',
     fontSize:'2em'
 };
 const unSelectedItemStyle ={
     textDecoration:'none',
-    color:'rgba(1,1,1,1)',
+    color:'rgba(0,0,0,1)',
     fontSize:'2em'
 };
 
@@ -54,7 +54,7 @@ class Item extends React.Component{
         return (           
             <ListItem primaryText={this.props.name} 
             style={this.props.done?selectedItemStyle:unSelectedItemStyle}
-            leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle style={{outlineColor:'rgba(1,1,1,0.4)'}} />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
+            leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
             rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} onClick={this.onDelete}/>} />
          
