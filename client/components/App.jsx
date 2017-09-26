@@ -19,6 +19,7 @@ import Toggle from 'material-ui/Toggle';
 //material-ui Icons
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
+import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
 
@@ -66,7 +67,8 @@ class Item extends React.Component{
 class  ItemList extends React.Component{
 
     state ={
-      items:[]
+      items:[],
+      selected:false
     };
 
 
@@ -91,17 +93,30 @@ class  ItemList extends React.Component{
              items:_.map(prevState.items,(val,i)=>{
                  if(i==item)
                  {
-                    val.done ? val.done=false: val.done=true;
+                    val.done ? val.done=true: val.done=false;
                  }
                  
                  return val;
              })
              }));
     }
+    selectAll =()=>{
+        console.log(this.state.selected);
+        this.setState(prevState =>({
+            
+             items:_.map(prevState.items,(val,i)=>{
+                 this.state.selected ?val.done=false: val.done=true;
+               
+                 
+                 return val;
+             }),
+             selected:!this.state.selected
+            }));
+    };
     render() {
     return (
       <Grid  >       
-        <Form onSubmit={this.addNewitem}/>
+        <Form selectAll={this.selectAll} onSubmit={this.addNewitem}/>
         <Row center={'xs'} >
             <Col  xs={5}>
                 <MuiThemeProvider >
@@ -135,17 +150,31 @@ class Form extends React.Component{
         this.props.onSubmit(this.state.item);
         this.setState({item:''});
     };
+    selectAll =()=>{
+        this.props.selectAll();
+    };
     render(){    
         return(
         <Row center='xs'>
             <Col  xs={5} >
                 <MuiThemeProvider >
                     <form  onSubmit={this.handleSubmit}>
-                        <TextField fullWidth value={this.state.item}
-                        onChange={(event)=>this.setState({item:event.target.value})}
-                        hintText="Holis"
-                        floatingLabelText="Introduce aqui algo por hacer"
-                        />  
+                        <Row bottom={'xs'}>
+                            <Col xs={2}>
+                                <FlatButton onClick={this.selectAll} icon={<ArrowDown/>}/>
+                            </Col>
+                            <Col xs={10}>
+                            <TextField
+                                fullWidth 
+                                value={this.state.item}
+                                style={{fontSize:'1.5em'}}
+                                onChange={(event)=>this.setState({item:event.target.value})}
+                                hintText="Buy stuff"
+                                floatingLabelText="What needs to be done?"
+                            />  
+                            </Col>
+                        </Row>
+                        
                     </form>                 
                 </MuiThemeProvider>    
             </Col>            
