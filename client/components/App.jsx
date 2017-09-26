@@ -53,12 +53,15 @@ class Item extends React.Component{
     };
 
     render(){
-        return (           
+        return (    
+            <div>       
             <ListItem primaryText={this.props.name} 
             style={this.props.done?selectedItemStyle:unSelectedItemStyle}
             leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
             rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} onClick={this.onDelete}/>} />
+            <Divider/>
+            </div>
          
         );
     }
@@ -122,7 +125,8 @@ class  ItemList extends React.Component{
         <Form selectAll={this.selectAll} onSubmit={this.addNewitem}/>
         <Row center={'xs'} >
             <Col  xs={5}>
-                <MuiThemeProvider >
+            
+                <MuiThemeProvider >                  
                     <List  >            
                         {
                         this.state.items.length>0?
