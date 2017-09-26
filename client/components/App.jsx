@@ -16,12 +16,22 @@ import Subheader from 'material-ui/Subheader';
 import Divider from 'material-ui/Divider';
 import Checkbox from 'material-ui/Checkbox';
 import Toggle from 'material-ui/Toggle';
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
+import MenuItem from 'material-ui/MenuItem';
+import DropDownMenu from 'material-ui/DropDownMenu';
+import IconMenu from 'material-ui/IconMenu';
+import IconButton from 'material-ui/IconButton';
+import Badge from 'material-ui/Badge';
+import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 //material-ui Icons
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
+
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 
 const selectedItemStyle ={
     textDecoration:'line-through',
@@ -34,7 +44,13 @@ const unSelectedItemStyle ={
     fontSize:'2em'
 };
 
-
+const styles = {
+  
+  radioButton: {
+    marginBottom: 16,
+    width:'auto'
+  },
+};
 class Item extends React.Component{
 
     state = {
@@ -140,8 +156,34 @@ class  ItemList extends React.Component{
                         }
                     </List>
                 </MuiThemeProvider >
+                
             </Col>
         </Row>
+        <Row middle={'xs'} center={'xs'}>
+            <Col xs={5}>
+                <MuiThemeProvider > 
+                    <Toolbar >                
+                        <ToolbarGroup firstChild={true}>
+                        <Badge
+                        badgeContent={10}
+                        secondary={true}
+                        badgeStyle={{top: 12, right: 12}}
+                        >
+                            <IconButton tooltip="items left">
+                            <NotificationsIcon />
+                            </IconButton>
+                    </Badge>
+                        </ToolbarGroup>       
+        <ToolbarGroup>         
+          <FlatButton label={'All'}/>
+          <FlatButton label={'Active'}/>
+          <FlatButton label={'Completed'}/>
+        </ToolbarGroup>
+      </Toolbar>
+      </MuiThemeProvider >
+            </Col>
+
+            </Row>
       </Grid>
     );
   }
