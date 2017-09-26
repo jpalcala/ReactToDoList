@@ -48,6 +48,7 @@ class Item extends React.Component{
         this.props.onDelete(this.state.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
+        console.log("sadas");
        this.props.itemStatusChanged(this.state.id);
     };
 
@@ -86,27 +87,29 @@ class  ItemList extends React.Component{
                 return n !== item;
             })
             }));
-    }
+    };
     itemStatusChanged = (item)=>{
+        console.log(item);
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
+                
                  if(i==item)
                  {
-                    val.done ? val.done=true: val.done=false;
+                    
+                   val.done = val.done?false:true;
                  }
-                 
                  return val;
              })
              }));
-    }
+             console.log(this.state.items);
+    };
     selectAll =()=>{
         console.log(this.state.selected);
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
-                 this.state.selected ?val.done=false: val.done=true;
-               
+                 this.state.selected ?val.done=false: val.done=true;             
                  
                  return val;
              }),
@@ -161,7 +164,7 @@ class Form extends React.Component{
                     <form  onSubmit={this.handleSubmit}>
                         <Row bottom={'xs'}>
                             <Col xs={2}>
-                                <FlatButton onClick={this.selectAll} icon={<ArrowDown/>}/>
+                            <FlatButton onClick={this.selectAll} icon={<ArrowDown/>}/>
                             </Col>
                             <Col xs={10}>
                             <TextField
