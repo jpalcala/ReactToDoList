@@ -69,6 +69,7 @@ class Item extends React.Component{
     };
     onCheckboxCliked = (ev,isChecked)=>{
       
+        console.log(this.state.id+'state')
        this.props.itemStatusChanged(this.state.id);
     };
 
@@ -87,44 +88,94 @@ class Item extends React.Component{
     }
   
 }
-
+const Filter = {
+    ALL:0,
+    ACTIVE:1,
+    COMPLETED:2
+};
 class  ItemList extends React.Component{
 
     state ={
       items:[],
-      selected:false
+      filteredItems:[],
+      selected:false,
+      activeFilter: Filter.ALL
     };
-
-
-    addNewitem= (name)=>{       
+    /*
+    filter = (item)=>{
+        switch(this.state.activeFilter){
+            case Filter.COMPLETED:
+                return item.done?true:false;
+            break;
+            case Filter.ACTIVE:
+            return item.done?false:true;
+            break;
+            default:
+            return true;
+            break;
+        }
+    };*/
+    filter = (f)=>{
+        console.log(f);
+       
         this.setState({
-            items: [...this.state.items, {name:name,done:false}]
-        })
+            filteredItems: _.filter(this.state.items,(item)=>{
 
+                switch(f){
+                    case Filter.COMPLETED:
+                        console.log('completed')
+                        return item.done?item:null;
+                    break;
+                    console.log('active')
+                    case Filter.ACTIVE:
+                    return item.done?null:item;
+                    break;
+                    default:
+                    console.log('all')
+                    return item;
+                    break;
+                }
+            }),
+            activeFilter:f
+        },()=>console.log(this.state.filteredItems));
+    };
+     addNewitem= (name)=>{       
+        this.setState({
+            items: [...this.state.items, {name:name,done:false,id:this.state.items.length}],
+          
+        },()=>this.filter(this.state.activeFilter));
+
+    };
+    filterAll = ()=>{
+console.log(this.state.activeFilter);
     };
 
     onDelete = (item)=>{
+        console.log('delete');
         this.setState(prevState =>({
            
             items: _.filter(prevState.items,(i,n)=>{
+                return n !== item;
+            }),
+            filteredItems:_.filter(prevState.filteredItems,(i,n)=>{
                 return n !== item;
             })
             }));
     };
     itemStatusChanged = (item)=>{
-        
+       console.log('item'+item);
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
                 
-                 if(i==item)
+                 if(val.id==item)
                  {
                     
                    val.done = val.done?false:true;
                  }
                  return val;
              })
-             }));
+             }),()=>this.filter(this.state.activeFilter));
     };
     selectAll =()=>{
        
@@ -142,26 +193,28 @@ class  ItemList extends React.Component{
     return (
       <Grid  >       
         <Form selected={this.state.selected} selectAll={this.selectAll} onSubmit={this.addNewitem}/>
+        
+        
         <Row center={'xs'} >
-            <Col   xs={12} sm={8} md={6} lg={5}>
+        <Col   xs={12} sm={8} md={6} lg={5}>
+        
+            <MuiThemeProvider >                  
+                <List  >            
+                    {
+                 
+                    this.state.filteredItems.map((item,i) => <Item 
+                        itemStatusChanged={this.itemStatusChanged} 
+                        done={item.done} onDelete={this.onDelete} 
+                        id={i} 
+                        key={i}  
+                        name={item.name}/>)
+                  
+                    }
+                </List>
+            </MuiThemeProvider >
             
-                <MuiThemeProvider >                  
-                    <List  >            
-                        {
-                        this.state.items.length>0?
-                        this.state.items.map((item,i) => <Item 
-                            itemStatusChanged={this.itemStatusChanged} 
-                            done={item.done} onDelete={this.onDelete} 
-                            id={i} 
-                            key={i}  
-                            name={item.name}/>)
-                        :<Subheader>Que hay que hacer?</Subheader>
-                        }
-                    </List>
-                </MuiThemeProvider >
-                
-            </Col>
-        </Row>
+        </Col>
+    </Row>
        
         <Row center={'xs'} >
             <Col   xs={12} sm={8} md={6} lg={5}>
@@ -182,13 +235,13 @@ class  ItemList extends React.Component{
                     </Badge>
                     </ToolbarGroup>
                     <ToolbarGroup >
-                    <IconButton tooltip="Select All" touch={true} tooltipPosition='bottom-center' ><SelectAllIcon/></IconButton> 
+                    <IconButton tooltip="Select All" onClick={()=>this.filter(Filter.ALL)} touch={true} tooltipPosition='bottom-center' ><SelectAllIcon/></IconButton> 
                     
                    
                    
-                    <IconButton tooltip="Active" touch={true} tooltipPosition='bottom-center' ><ScheduleIcon/></IconButton> 
+                    <IconButton tooltip="Active" onClick={()=>this.filter(Filter.ACTIVE)} touch={true} tooltipPosition='bottom-center' ><ScheduleIcon/></IconButton> 
                    
-                    <IconButton tooltip="Completed" touch={true} tooltipPosition='bottom-center' ><DoneIcon/></IconButton> 
+                    <IconButton tooltip="Completed" onClick={()=>this.filter(Filter.COMPLETED)} touch={true} tooltipPosition='bottom-center' ><DoneIcon/></IconButton> 
                     
                     </ToolbarGroup>
                        
@@ -201,6 +254,7 @@ class  ItemList extends React.Component{
       </MuiThemeProvider >
       </Col>
         </Row>
+        
             
       </Grid>
     );
