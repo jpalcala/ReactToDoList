@@ -25,13 +25,15 @@ import Badge from 'material-ui/Badge';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 //material-ui Icons
 import ActionDelete from 'material-ui/svg-icons/action/delete';
+import DoneIcon from 'material-ui/svg-icons/action/done';
+import ScheduleIcon from 'material-ui/svg-icons/action/schedule';
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
 import DoneAllIcon from 'material-ui/svg-icons/action/done-all';
 import AllOutIcon from 'material-ui/svg-icons/action/all-out';
-
+import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 
@@ -160,14 +162,15 @@ class  ItemList extends React.Component{
                 
             </Col>
         </Row>
-        <Row middle={'xs'} around={'xs'}>
-            
+       
+        <Row center={'xs'} >
+            <Col   xs={12} sm={8} md={6} lg={5}>
                 <MuiThemeProvider > 
                
                     <Toolbar >     
-                          
-                        <ToolbarGroup firstChild={true}>
-                        <Col  xs={3} >    
+                  
+                        <ToolbarGroup firstChild>
+                           
                         <Badge
                         badgeContent={_.reduce(this.state.items, function(memo, num){ return num.done?memo: memo + 1 }, 0)}
                         secondary={true}
@@ -177,29 +180,28 @@ class  ItemList extends React.Component{
                             <NotificationsIcon />
                             </IconButton>
                     </Badge>
-                    </Col>  
-                    <Col  xs={3} >   
-                    <FlatButton  label={'All'}/>
-                    </Col>  
-                    <Col  xs={3} >   
-                    <FlatButton  label={'Active'}/>
-                    </Col>  
-                    <Col  xs={3} >   
-                    <FlatButton  label={'Completed'}/>
-                    </Col>  
-                        </ToolbarGroup>   
-                        
+                    </ToolbarGroup>
+                    <ToolbarGroup >
+                    <IconButton tooltip="Select All" touch={true} tooltipPosition='bottom-center' ><SelectAllIcon/></IconButton> 
+                    
+                   
+                   
+                    <IconButton tooltip="Active" touch={true} tooltipPosition='bottom-center' ><ScheduleIcon/></IconButton> 
+                   
+                    <IconButton tooltip="Completed" touch={true} tooltipPosition='bottom-center' ><DoneIcon/></IconButton> 
+                    
+                    </ToolbarGroup>
+                       
                        
            
           
-       
-         
       </Toolbar>
+     
       
       </MuiThemeProvider >
-           
-
-            </Row>
+      </Col>
+        </Row>
+            
       </Grid>
     );
   }
