@@ -165,11 +165,11 @@ class  ItemList extends React.Component{
                     <Toolbar >                
                         <ToolbarGroup firstChild={true}>
                         <Badge
-                        badgeContent={10}
+                        badgeContent={_.reduce(this.state.items, function(memo, num){ return num.done?memo: memo + 1 }, 0)}
                         secondary={true}
-                        badgeStyle={{top: 12, right: 12}}
+                        badgeStyle={{top: 20, right: 20}}
                         >
-                            <IconButton tooltip="items left">
+                            <IconButton tooltip="Items left">
                             <NotificationsIcon />
                             </IconButton>
                     </Badge>
