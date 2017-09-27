@@ -29,6 +29,8 @@ import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
+import DoneAllIcon from 'material-ui/svg-icons/action/done-all';
+import AllOutIcon from 'material-ui/svg-icons/action/all-out';
 
 import ActionFavorite from 'material-ui/svg-icons/action/favorite';
 import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
@@ -60,11 +62,11 @@ class Item extends React.Component{
     };
 
     onDelete = (ev)=>{
-        console.log(this.state.id);
+       
         this.props.onDelete(this.state.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
-        console.log("sadas");
+      
        this.props.itemStatusChanged(this.state.id);
     };
 
@@ -75,7 +77,7 @@ class Item extends React.Component{
             style={this.props.done?selectedItemStyle:unSelectedItemStyle}
             leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
-            rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} onClick={this.onDelete}/>} />
+            rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} style={{height:'100%'}} onClick={this.onDelete}/>} />
             <Divider/>
             </div>
          
@@ -108,7 +110,7 @@ class  ItemList extends React.Component{
             }));
     };
     itemStatusChanged = (item)=>{
-        console.log(item);
+        
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
@@ -121,10 +123,9 @@ class  ItemList extends React.Component{
                  return val;
              })
              }));
-             console.log(this.state.items);
     };
     selectAll =()=>{
-        console.log(this.state.selected);
+       
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
@@ -132,13 +133,13 @@ class  ItemList extends React.Component{
                  
                  return val;
              }),
-             selected:!this.state.selected
+             selected:!prevState.selected
             }));
     };
     render() {
     return (
       <Grid  >       
-        <Form selectAll={this.selectAll} onSubmit={this.addNewitem}/>
+        <Form selected={this.state.selected} selectAll={this.selectAll} onSubmit={this.addNewitem}/>
         <Row center={'xs'} >
             <Col  xs={5}>
             
@@ -195,7 +196,6 @@ class Form extends React.Component{
 
     handleSubmit = (event)=>{
         event.preventDefault();
-        console.log(this.state.item);
         this.props.onSubmit(this.state.item);
         this.setState({item:''});
     };
@@ -210,7 +210,7 @@ class Form extends React.Component{
                     <form  onSubmit={this.handleSubmit}>
                         <Row bottom={'xs'}>
                             <Col xs={2}>
-                            <FlatButton onClick={this.selectAll} icon={<ArrowDown/>}/>
+                            <FlatButton onClick={this.selectAll} icon={this.props.selected?<AllOutIcon/>:<DoneAllIcon/>}/>
                             </Col>
                             <Col xs={10}>
                             <TextField
