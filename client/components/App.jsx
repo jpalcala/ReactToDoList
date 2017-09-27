@@ -141,7 +141,7 @@ class  ItemList extends React.Component{
       <Grid  >       
         <Form selected={this.state.selected} selectAll={this.selectAll} onSubmit={this.addNewitem}/>
         <Row center={'xs'} >
-            <Col  xs={5}>
+            <Col   xs={12} sm={8} md={6} lg={5}>
             
                 <MuiThemeProvider >                  
                     <List  >            
@@ -160,11 +160,14 @@ class  ItemList extends React.Component{
                 
             </Col>
         </Row>
-        <Row middle={'xs'} center={'xs'}>
-            <Col xs={5}>
+        <Row middle={'xs'} around={'xs'}>
+            
                 <MuiThemeProvider > 
-                    <Toolbar >                
+               
+                    <Toolbar >     
+                          
                         <ToolbarGroup firstChild={true}>
+                        <Col  xs={3} >    
                         <Badge
                         badgeContent={_.reduce(this.state.items, function(memo, num){ return num.done?memo: memo + 1 }, 0)}
                         secondary={true}
@@ -174,15 +177,27 @@ class  ItemList extends React.Component{
                             <NotificationsIcon />
                             </IconButton>
                     </Badge>
-                        </ToolbarGroup>       
-        <ToolbarGroup>         
-          <FlatButton label={'All'}/>
-          <FlatButton label={'Active'}/>
-          <FlatButton label={'Completed'}/>
-        </ToolbarGroup>
+                    </Col>  
+                    <Col  xs={3} >   
+                    <FlatButton  label={'All'}/>
+                    </Col>  
+                    <Col  xs={3} >   
+                    <FlatButton  label={'Active'}/>
+                    </Col>  
+                    <Col  xs={3} >   
+                    <FlatButton  label={'Completed'}/>
+                    </Col>  
+                        </ToolbarGroup>   
+                        
+                       
+           
+          
+       
+         
       </Toolbar>
+      
       </MuiThemeProvider >
-            </Col>
+           
 
             </Row>
       </Grid>
@@ -204,13 +219,13 @@ class Form extends React.Component{
     };
     render(){    
         return(
-        <Row center='xs'>
-            <Col  xs={5} >
+        <Row center='xs'  >
+            <Col  xs={12} sm={8} md={6} lg={5} >
                 <MuiThemeProvider >
                     <form  onSubmit={this.handleSubmit}>
                         <Row bottom={'xs'}>
                             <Col xs={2}>
-                            <FlatButton onClick={this.selectAll} icon={this.props.selected?<AllOutIcon/>:<DoneAllIcon/>}/>
+                            <FlatButton onClick={this.selectAll} style={{minWidth:'40px'}} icon={this.props.selected?<AllOutIcon/>:<DoneAllIcon/>}/>
                             </Col>
                             <Col xs={10}>
                             <TextField
