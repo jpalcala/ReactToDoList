@@ -167,7 +167,7 @@ class  ItemList extends React.Component{
                         <Badge
                         badgeContent={_.reduce(this.state.items, function(memo, num){ return num.done?memo: memo + 1 }, 0)}
                         secondary={true}
-                        badgeStyle={{top: 20, right: 20}}
+                        badgeStyle={_.reduce(this.state.items, function(memo, num){ return num.done?memo: memo + 1 }, 0)>0?{top: 20, right: 20}:{display:'none'}}
                         >
                             <IconButton tooltip="Items left">
                             <NotificationsIcon />
