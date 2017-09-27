@@ -81,7 +81,7 @@ class Item extends React.Component{
             style={this.props.done?selectedItemStyle:unSelectedItemStyle}
             leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
-            rightIconButton={<FlatButton  icon={<ActionDelete color={red500} />} style={{height:'100%'}} onClick={this.onDelete}/>} />
+            rightIconButton={<IconButton    onClick={this.onDelete}><ActionDelete color={red500} /></IconButton>} />
             <Divider/>
             </div>
          
@@ -272,7 +272,7 @@ class Form extends React.Component{
                     <form  onSubmit={this.handleSubmit}>
                         <Row bottom={'xs'}>
                             <Col xs={2}>
-                            <FlatButton onClick={this.selectAll} style={{minWidth:'40px'}} icon={this.props.selected?<AllOutIcon/>:<DoneAllIcon/>}/>
+                            <IconButton onClick={this.selectAll} >{this.props.selected?<AllOutIcon/>:<DoneAllIcon/>}</IconButton>                            
                             </Col>
                             <Col xs={10}>
                             <TextField
