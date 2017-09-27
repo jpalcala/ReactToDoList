@@ -23,19 +23,24 @@ import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import Badge from 'material-ui/Badge';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
-//material-ui Icons
+// colors
+import {red500, grey400, blue500} from 'material-ui/styles/colors';
+
+//Action icons
+import DoneAllIcon from 'material-ui/svg-icons/action/done-all';
+import AllOutIcon from 'material-ui/svg-icons/action/all-out';
+import ActionFavorite from 'material-ui/svg-icons/action/favorite';
+import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import DoneIcon from 'material-ui/svg-icons/action/done';
 import ScheduleIcon from 'material-ui/svg-icons/action/schedule';
+//material-ui Icons
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
-import {red500, grey400, blue500} from 'material-ui/styles/colors';
-import DoneAllIcon from 'material-ui/svg-icons/action/done-all';
-import AllOutIcon from 'material-ui/svg-icons/action/all-out';
+
+
 import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
-import ActionFavorite from 'material-ui/svg-icons/action/favorite';
-import ActionFavoriteBorder from 'material-ui/svg-icons/action/favorite-border';
 
 const selectedItemStyle ={
     textDecoration:'line-through',
@@ -57,20 +62,16 @@ const styles = {
 };
 class Item extends React.Component{
 
-    state = {
-        done:this.props.done,
-        id:this.props.id,
-        name:this.props.name
-    };
+    
 
     onDelete = (ev)=>{
        
-        this.props.onDelete(this.state.id);
+        this.props.onDelete(this.props.id);
     };
     onCheckboxCliked = (ev,isChecked)=>{
       
-        console.log(this.state.id+'state')
-       this.props.itemStatusChanged(this.state.id);
+        
+       this.props.itemStatusChanged(this.props.id);
     };
 
     render(){
@@ -101,75 +102,63 @@ class  ItemList extends React.Component{
       selected:false,
       activeFilter: Filter.ALL
     };
-    /*
-    filter = (item)=>{
-        switch(this.state.activeFilter){
-            case Filter.COMPLETED:
-                return item.done?true:false;
-            break;
-            case Filter.ACTIVE:
-            return item.done?false:true;
-            break;
-            default:
-            return true;
-            break;
-        }
-    };*/
     filter = (f)=>{
-        console.log(f);
+      
        
         this.setState({
             filteredItems: _.filter(this.state.items,(item)=>{
 
                 switch(f){
                     case Filter.COMPLETED:
-                        console.log('completed')
+                       
                         return item.done?item:null;
                     break;
-                    console.log('active')
+                   
                     case Filter.ACTIVE:
                     return item.done?null:item;
                     break;
                     default:
-                    console.log('all')
+                   
                     return item;
                     break;
                 }
             }),
             activeFilter:f
-        },()=>console.log(this.state.filteredItems));
+        });
     };
-     addNewitem= (name)=>{       
-        this.setState({
-            items: [...this.state.items, {name:name,done:false,id:this.state.items.length}],
+     addNewitem= (name)=>{   
+       
+        this.setState(prevState=>({
+            items: [...prevState.items, {name:name,done:false,id:prevState.items.length}],
           
-        },()=>this.filter(this.state.activeFilter));
+        }),()=>this.filter(this.state.activeFilter));
 
-    };
-    filterAll = ()=>{
-console.log(this.state.activeFilter);
     };
 
     onDelete = (item)=>{
-        console.log('delete');
+       
         this.setState(prevState =>({
            
             items: _.filter(prevState.items,(i,n)=>{
-                return n !== item;
+               
+                return i.id !== item;
             }),
             filteredItems:_.filter(prevState.filteredItems,(i,n)=>{
-                return n !== item;
+               
+                return i.id !== item;
             })
             }));
     };
     itemStatusChanged = (item)=>{
-       console.log('item'+item);
+      
         this.setState(prevState =>({
             
              items:_.map(prevState.items,(val,i)=>{
-                
-                 if(val.id==item)
+
+               
+                 if(val.id===item)
                  {
+                    
                     
                    val.done = val.done?false:true;
                  }
@@ -187,7 +176,7 @@ console.log(this.state.activeFilter);
                  return val;
              }),
              selected:!prevState.selected
-            }));
+            }),()=>this.filter(this.state.activeFilter));
     };
     render() {
     return (
@@ -202,12 +191,14 @@ console.log(this.state.activeFilter);
                 <List  >            
                     {
                  
-                    this.state.filteredItems.map((item,i) => <Item 
+                    this.state.filteredItems.map((item,i) => {
+                        
+                        return  <Item 
                         itemStatusChanged={this.itemStatusChanged} 
                         done={item.done} onDelete={this.onDelete} 
-                        id={i} 
+                        id={item.id} 
                         key={i}  
-                        name={item.name}/>)
+                        name={item.name}/>})
                   
                     }
                 </List>
@@ -304,7 +295,7 @@ class Form extends React.Component{
 }
 
 
-class App extends React.Component {
+class ToDoList extends React.Component {
    
   render(){
 
@@ -314,4 +305,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default ToDoList;
