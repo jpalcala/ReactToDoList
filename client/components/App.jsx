@@ -159,39 +159,40 @@ class  ItemList extends React.Component{
             this.setState({
               items: snapshot.val(),
               filteredItems: snapshot.val()
-            })
+            },this.filter(this.state.activeFilter))
           })
 
-          listRef.on('child_added', function(data) {
-            console.log(data);
-          });
+          
 
     }
     
     filter = (f)=>{
-        this.setState({
-            filteredItems : _.filter(this.state.items, (item) => {
-
-                switch (f) {
-                    case Filter.COMPLETED:
-                        return item.done
-                            ? item
-                            : null;
-                        break;
-
-                    case Filter.ACTIVE:
-                        return item.done
-                            ? null
-                            : item;
-                        break;
-                    default:
-
-                        return item;
-                        break;
-                }
-            }),
-            activeFilter : f
+        listRef.once('value').then((snapshot)=>{
+            this.setState({
+                items : _.filter(snapshot.val(), (item) => {
+    
+                    switch (f) {
+                        case Filter.COMPLETED:
+                            return item.done
+                                ? item
+                                : null;
+                            break;
+    
+                        case Filter.ACTIVE:
+                            return item.done
+                                ? null
+                                : item;
+                            break;
+                        default:
+    
+                            return item;
+                            break;
+                    }
+                }),
+                activeFilter : f
+            });
         });
+        
     };
      addNewitem= (name)=>{   
        var newPostRef = listRef.push();
@@ -204,7 +205,13 @@ class  ItemList extends React.Component{
     };
 
     onDelete = (item)=>{
-        listRef.child(item).remove();      
+       
+        
+        listRef.child(item).once('value').then(function(snapshot) {
+            console.log(snapshot.val());
+           
+          });
+          listRef.child(item).remove();   
     };
 
     removeAllDone = ()=>{
@@ -222,13 +229,11 @@ class  ItemList extends React.Component{
     };
     itemStatusChanged = (item)=>{
       
-        this.setState(prevState =>({
+        listRef.child(item).once('value').then(function(snapshot) {
             
-             items:_.map(prevState.items,(val,i)=>{
-                val.done = (val.id==item ? val.done? false:true:val.done); 
-                 return val;
-             })
-        }),()=>this.filter(this.state.activeFilter));
+            listRef.child(item).update({done:!snapshot.val().done});
+          });
+       
     };
     selectAll =()=>{       
         this.setState(prevState =>({
