@@ -198,23 +198,13 @@ class  ItemList extends React.Component{
        newPostRef.set({
         name:name,done:false,id:120,id:newPostRef.key
        });
-       
+
+     
 
     };
 
     onDelete = (item)=>{
-       
-        this.setState(prevState =>({
-           
-            items: _.filter(prevState.items,(i,n)=>{
-               
-                return i.id !== item;
-            }),
-            filteredItems:_.filter(prevState.filteredItems,(i,n)=>{
-               
-                return i.id !== item;
-            })
-            }));
+        listRef.child(item).remove();      
     };
 
     removeAllDone = ()=>{
