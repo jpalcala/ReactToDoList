@@ -38,6 +38,7 @@ import ScheduleIcon from 'material-ui/svg-icons/action/schedule';
 import ImageCircle  from  'material-ui/svg-icons/image/panorama-fish-eye'
 import ArrowDown  from  'material-ui/svg-icons/hardware/keyboard-arrow-down'
 import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
+import ClearAllIcon from 'material-ui/svg-icons/communication/clear-all'
 
 
 import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
@@ -99,7 +100,7 @@ class Form extends React.Component{
     };
 
     selectAll =()=> this.props.selectAll();
-    
+
     render(){    
         return(
         <Row center='xs'  >
@@ -186,6 +187,20 @@ class  ItemList extends React.Component{
             })
             }));
     };
+
+    removeAllDone = ()=>{
+        this.setState(prevState =>({
+            
+             items: _.filter(prevState.items,(i,n)=>{
+                
+                 return i.done !== true;
+             }),
+             filteredItems:_.filter(prevState.filteredItems,(i,n)=>{
+                
+                 return i.done !== true;
+             })
+             }));
+    };
     itemStatusChanged = (item)=>{
       
         this.setState(prevState =>({
@@ -249,7 +264,8 @@ class  ItemList extends React.Component{
                         <ToolbarGroup >
                         <IconButton tooltip="Select All"  onClick={()=>this.filter(Filter.ALL)} touch={true} tooltipPosition='bottom-center' ><SelectAllIcon/></IconButton>   
                             <IconButton tooltip="Active" onClick={()=>this.filter(Filter.ACTIVE)} touch={true} tooltipPosition='bottom-center' ><ScheduleIcon/></IconButton>                         
-                            <IconButton tooltip="Completed" onClick={()=>this.filter(Filter.COMPLETED)} touch={true} tooltipPosition='bottom-center' ><DoneIcon/></IconButton>                        
+                            <IconButton tooltip="Completed" onClick={()=>this.filter(Filter.COMPLETED)} touch={true} tooltipPosition='bottom-center' ><DoneIcon/></IconButton>  
+                            <IconButton tooltip="Remove Done" onClick={this.removeAllDone}  touch={true} tooltipPosition='bottom-center' ><ClearAllIcon/></IconButton>                      
                         </ToolbarGroup>
                     </Toolbar>
                 </MuiThemeProvider >
