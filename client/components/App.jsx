@@ -43,6 +43,19 @@ import ClearAllIcon from 'material-ui/svg-icons/communication/clear-all'
 
 import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
 
+import * as firebase from 'firebase'
+
+const config = {
+    apiKey: "AIzaSyCQKxNWwNAtE-q4yQgbKZbv1YPAtVadujk",
+    authDomain: "amazing-list.firebaseapp.com",
+    databaseURL: "https://amazing-list.firebaseio.com",
+    projectId: "amazing-list",
+    storageBucket: "amazing-list.appspot.com",
+    messagingSenderId: "15068975582"
+  };
+  firebase.initializeApp(config);
+  const listRef =  firebase.database().ref().child('list');
+  console.log('firebase initialized');
 
 const Filter = {
     ALL: 0,
@@ -92,6 +105,7 @@ class Form extends React.Component{
     state = {
         item: ''
     }
+    
 
     handleSubmit = (event) => {
         event.preventDefault();
@@ -139,6 +153,21 @@ class  ItemList extends React.Component{
         selected: false,
         activeFilter: Filter.ALL
     };
+
+    componentDidMount(){
+        listRef.on('value', snapshot => {
+            this.setState({
+              items: snapshot.val(),
+              filteredItems: snapshot.val()
+            })
+          })
+
+          listRef.on('child_added', function(data) {
+            console.log(data);
+          });
+
+    }
+    
     filter = (f)=>{
         this.setState({
             filteredItems : _.filter(this.state.items, (item) => {
@@ -165,11 +194,11 @@ class  ItemList extends React.Component{
         });
     };
      addNewitem= (name)=>{   
+       var newPostRef = listRef.push();
+       newPostRef.set({
+        name:name,done:false,id:120,id:newPostRef.key
+       });
        
-        this.setState(prevState=>({
-            items: [...prevState.items, {name:name,done:false,id:prevState.items.length}],
-          
-        }),()=>this.filter(this.state.activeFilter));
 
     };
 
@@ -230,7 +259,7 @@ class  ItemList extends React.Component{
                 <MuiThemeProvider >                  
                     <List  >            
                         {                 
-                        this.state.filteredItems.map((item,i) => {
+                        _.map(this.state.items,(item,i) => {
                             
                             return  <Item 
                             itemStatusChanged={this.itemStatusChanged} 
@@ -280,8 +309,12 @@ class  ItemList extends React.Component{
 
 
 class ToDoList extends React.Component {
-
+   
+ componentDidMount(){
+   
+ }
     render() {
+        console.log();
 
         return (<ItemList/>)
     }
