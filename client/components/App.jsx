@@ -42,23 +42,25 @@ import ActionCheckCircle  from  'material-ui/svg-icons/action/check-circle'
 
 import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
 
-const selectedItemStyle ={
-    textDecoration:'line-through',
-    color:'rgba(0,0,0,0.5)',
-    fontSize:'2em'
-};
-const unSelectedItemStyle ={
-    textDecoration:'none',
-    color:'rgba(0,0,0,1)',
-    fontSize:'2em'
-};
+
+
 
 const styles = {
   
-  radioButton: {
-    marginBottom: 16,
-    width:'auto'
-  },
+    radioButton: {
+        marginBottom: 16,
+        width:'auto'
+    },
+  unSelectedItemStyle :{
+        textDecoration:'none',
+        color:'rgba(0,0,0,1)',
+        fontSize:'2em'
+    },
+    selectedItemStyle :{
+        textDecoration:'line-through',
+        color:'rgba(0,0,0,0.5)',
+        fontSize:'2em'
+    }
 };
 class Item extends React.Component{
 
@@ -78,7 +80,7 @@ class Item extends React.Component{
         return (    
             <div>       
             <ListItem primaryText={this.props.name} 
-            style={this.props.done?selectedItemStyle:unSelectedItemStyle}
+            style={this.props.done?styles.selectedItemStyle:styles.unSelectedItemStyle}
             leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
             onCheck={this.onCheckboxCliked} />} 
             rightIconButton={<IconButton    onClick={this.onDelete}><ActionDelete color={red500} /></IconButton>} />
