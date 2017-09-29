@@ -155,20 +155,42 @@ class  ItemList extends React.Component{
     };
 
     componentDidMount(){
-        listRef.on('value', snapshot => {
-            this.setState({
-              items: snapshot.val(),
-              filteredItems: snapshot.val()
-            },this.filter(this.state.activeFilter))
-          })
+        listRef.on('child_added', data => {
+            this.setState(prevState=>({
+                items:[...prevState.items,data.val()]
+            }),()=>console.log('child added'))
+          });
 
-          
+          listRef.on('child_removed',data =>{
+            this.setState(prevState=>({
+                items:_.filter(prevState.items,(item,i)=>{
+                    
+                    return data.val().id!==item.id;
+                })
+            }),()=>console.log('child removed'));
+          });
+
+          listRef.on('child_changed',data =>{
+            this.setState(prevState=>({
+                items:_.map(prevState.items,(item,i)=>{
+                    
+                    if(data.val().id===item.id)
+                    item=data.val();
+                    return item;
+                })
+            }),()=>console.log('child changed'));
+          });
+
 
     }
     
     filter = (f)=>{
         listRef.once('value').then((snapshot)=>{
+
+            console.log(listRef.orderByChild('done'));
             this.setState({
+
+
                 items : _.filter(snapshot.val(), (item) => {
     
                     switch (f) {
@@ -215,17 +237,12 @@ class  ItemList extends React.Component{
     };
 
     removeAllDone = ()=>{
-        this.setState(prevState =>({
-            
-             items: _.filter(prevState.items,(i,n)=>{
-                
-                 return i.done !== true;
-             }),
-             filteredItems:_.filter(prevState.filteredItems,(i,n)=>{
-                
-                 return i.done !== true;
-             })
-             }));
+        let temp = this.state.items.slice();
+
+        _.each(temp,(element)=>{
+            if(element.done)
+            listRef.child(element.id).remove();
+        });
     };
     itemStatusChanged = (item)=>{
       
@@ -235,15 +252,15 @@ class  ItemList extends React.Component{
           });
        
     };
-    selectAll =()=>{       
-        this.setState(prevState =>({
-            
-             items:_.map(prevState.items,(val,i)=>{
-                 this.state.selected ?val.done=false: val.done=true;
-                 return val;
-             }),             
-             selected:!prevState.selected
-        }),()=>this.filter(this.state.activeFilter));
+    selectAll =()=>{     
+        let temp = this.state.items.slice();
+
+       
+        _.each(temp,(element)=>{
+            listRef.child(element.id).update({done:! this.state.selected ?false:true});
+        });
+
+        
     };
     render() {
     return (
