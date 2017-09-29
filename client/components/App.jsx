@@ -249,60 +249,115 @@ class  ItemList extends React.Component{
                 dialog:{
                     text:'You just logged out',
                     open:true
-                }
-            });
+                },
+                items:[]
+            },()=>console.log());
           }.bind(this), function(error) {
             // An error happened.
           });
     }
+    getInitialState() {
+      
+        firebase.auth().onAuthStateChanged(function(user) {
+            console.log(user);
+            if (user) {
+             
+             return{
+                items: [],
+                filteredItems: [],
+                selected: false,
+                activeFilter: Filter.ALL,
+                  user:user,
+                  photoURL:user.photoURL,
+                  username:user.displayName,
+                  email:user.email,
+                  logged:true
+              };
+            } else {
+                return {
+                    items: [],
+                    filteredItems: [],
+                    selected: false,
+                    activeFilter: Filter.ALL,
+                    photoURL:'',
+                    email:'',
+                    username:'',
+                    user:null,
+                    logged:false,
+                    dialog:{
+                        open:false,
+                        text:''
+                    }
+                }
+            }
+          });
+         
+
+      }
     componentDidMount(){
-        listRef.on('child_added', data => {
-            this.setState(prevState=>({
-                items:[...prevState.items,data.val()]
-            }),()=>console.log('child added'))
-          });
-
-          
-          listRef.on('child_removed',data =>{
-            this.setState(prevState=>({
-                items:_.filter(prevState.items,(item,i)=>{
-                    
-                    return data.val().id!==item.id;
-                })
-            }),()=>console.log('child removed'));
-          });
-
-          listRef.on('child_changed',data =>{
-            this.setState(prevState=>({
-                items:_.map(prevState.items,(item,i)=>{
-                    
-                    if(data.val().id===item.id)
-                    item=data.val();
-                    return item;
-                })
-            }),()=>console.log('child changed'));
-          });
-
-
+        
+      console.log(this.state.logged);
+           
+        
     }
     componentWillUnmount() {
        listRef.remove();
       }
       componentWillMount(){
         firebase.auth().onAuthStateChanged(function(user) {
+            
             if (user) {
-             
-              this.setState({
-                  user:user,
-                  photoURL:user.photoURL,
-                  username:user.displayName,
-                  email:user.email,
-                  logged:true
-              });
-            } else {
-             
+            this.setState({
+                user:user,
+                photoURL:user.photoURL,
+                username:user.displayName,
+                email:user.email,
+                logged:true
+            });
+
+                  
+              
             }
-          }.bind(this));
+            if(this.state.logged){
+                listRef.on('child_added', data => {
+                    this.setState(prevState=>({
+                        items:[...prevState.items,data.val()]
+                    }),()=>console.log('child added'))
+                  });
+        
+        
+                  
+                  listRef.on('child_removed',data =>{
+                    this.setState(prevState=>({
+                        items:_.filter(prevState.items,(item,i)=>{
+                            
+                            return data.val().id!==item.id;
+                        })
+                    }),()=>console.log('child removed'));
+                  });
+        
+                  listRef.on('child_changed',data =>{
+                    this.setState(prevState=>({
+                        items:_.map(prevState.items,(item,i)=>{
+                            
+                            if(data.val().id===item.id)
+                            item=data.val();
+                            return item;
+                        })
+                    }),()=>console.log('child changed'));
+                  });
+        
+            }
+            else{
+                this.setState(prevState=>({
+                    dialog:{
+                        open:true,
+                        text:'Please login in order to use this app'
+                    }
+                }));
+            } 
+
+            }.bind(this));
       }
     
     filter = (f)=>{
