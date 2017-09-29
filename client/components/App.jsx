@@ -26,6 +26,7 @@ import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
 import AppBar from 'material-ui/AppBar';
 import Avatar from 'material-ui/Avatar';
+import Dialog from 'material-ui/Dialog';
 // colors
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
 
@@ -190,7 +191,11 @@ class  ItemList extends React.Component{
         email:'',
         username:'',
         user:null,
-        logged:false
+        logged:false,
+        dialog:{
+            open:false,
+            text:''
+        }
     };
 
     checkLog = function(){
@@ -240,7 +245,11 @@ class  ItemList extends React.Component{
                 photoURL:'',
                 username:'',
                 email:'',
-                logged:false
+                logged:false,
+                dialog:{
+                    text:'You just logged out',
+                    open:true
+                }
             });
           }.bind(this), function(error) {
             // An error happened.
@@ -368,9 +377,47 @@ class  ItemList extends React.Component{
             listRef.child(element.id).update({done:true});
         });
     };
+    handleOpen = () => {
+        this.setState(prevState=>({
+            dialog:{
+                open:true,
+                text:prevState.dialog.text
+            }
+        }));
+      };
+    
+      handleClose = () => {
+        this.setState(prevState=>({
+            dialog:{
+                open:false,
+                text:prevState.dialog.text
+            }
+        }));
+      };
+      
     render() {
+        const actions = [
+            
+            <FlatButton
+              label="Ok"
+              primary={true}
+              keyboardFocused={true}
+              onClick={this.handleClose}
+            />,
+          ];
     return (
     <Grid  >  
+        <MuiThemeProvider >
+        <Dialog
+          title="Alert"
+          actions={actions}
+          modal={false}
+          open={this.state.dialog.open}
+          onRequestClose={this.handleClose}
+        >
+         {this.state.dialog.text}
+        </Dialog>
+        </MuiThemeProvider >
          <MuiThemeProvider >     
          <AppBar
          iconElementRight={this.state.logged ? <Logged click={this.logOut}/>: <Login click={this.logIn}/>}
