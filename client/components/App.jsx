@@ -23,6 +23,9 @@ import IconMenu from 'material-ui/IconMenu';
 import IconButton from 'material-ui/IconButton';
 import Badge from 'material-ui/Badge';
 import NotificationsIcon from 'material-ui/svg-icons/social/notifications';
+import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import AppBar from 'material-ui/AppBar';
+import Avatar from 'material-ui/Avatar';
 // colors
 import {red500, grey400, blue500} from 'material-ui/styles/colors';
 
@@ -45,6 +48,7 @@ import SelectAllIcon from 'material-ui/svg-icons/content/select-all';
 
 import * as firebase from 'firebase'
 
+
 const config = {
     apiKey: "AIzaSyCQKxNWwNAtE-q4yQgbKZbv1YPAtVadujk",
     authDomain: "amazing-list.firebaseapp.com",
@@ -57,6 +61,20 @@ const config = {
   const listRef =  firebase.database().ref().child('list');
   console.log('firebase initialized');
 
+  /*firebase.auth().signOut().then(function() {
+    console.log('logged out');
+  }).catch(function(error) {
+    console.log('err out');
+  });*/
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+     console.log(user);
+    } else {
+      console.log('no');
+    }
+  });
+ 
 const Filter = {
     ALL: 0,
     ACTIVE: 1,
@@ -71,15 +89,31 @@ const styles = {
     },
     unSelectedItemStyle: {
         textDecoration: 'none',
-        color: 'rgba(0,0,0,1)',
-        fontSize: '2em'
+        color: 'rgba(0,0,0,1)'
     },
     selectedItemStyle: {
         textDecoration: 'line-through',
-        color: 'rgba(0,0,0,0.5)',
-        fontSize: '2em'
+        color: 'rgba(0,0,0,0.5)'
     }
 };
+class Login extends React.Component {
+    static muiName = 'FlatButton';
+  
+    render() {
+      return (
+        <FlatButton onClick={this.props.click} label="Login" />
+      );
+    }
+  }
+  class Logged extends React.Component {
+    static muiName = 'FlatButton';
+  
+    render() {
+      return (
+        <FlatButton onClick={this.props.click} label="Logout" />
+      );
+    }
+  }
 
 class Item extends React.Component{  
     onDelete = (ev)=> this.props.onDelete(this.props.id);
@@ -88,7 +122,7 @@ class Item extends React.Component{
 
     render(){
         return (    
-            <div>       
+            <div>
             <ListItem primaryText={this.props.name} 
             style={this.props.done?styles.selectedItemStyle:styles.unSelectedItemStyle}
             leftCheckbox={<Checkbox uncheckedIcon={<ImageCircle color={grey400}  />} checkedIcon={<ActionCheckCircle/>} checked={this.props.done} 
@@ -151,9 +185,67 @@ class  ItemList extends React.Component{
         items: [],
         filteredItems: [],
         selected: false,
-        activeFilter: Filter.ALL
+        activeFilter: Filter.ALL,
+        photoURL:'',
+        email:'',
+        username:'',
+        user:null,
+        logged:false
     };
 
+    checkLog = function(){
+        console.log('check');
+     
+        
+
+    
+    };
+  
+    logIn =()=>{
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('profile');
+        provider.addScope('email');
+        provider.addScope('https://www.googleapis.com/auth/plus.me');
+        firebase.auth().signInWithPopup(provider).then(function(result) {
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = result.credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+
+            this.setState({
+                user:user,
+                photoURL:user.photoURL,
+                username:user.displayName,
+                email:user.email,
+                logged:true
+            },()=>console.log(user));
+            // ...
+        }.bind(this)).catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+
+            console.log(error);
+            // ...
+        });
+    };
+    logOut = () =>{
+        firebase.auth().signOut().then(function() {
+            this.setState({
+                user:null,
+                photoURL:'',
+                username:'',
+                email:'',
+                logged:false
+            });
+          }.bind(this), function(error) {
+            // An error happened.
+          });
+    }
     componentDidMount(){
         listRef.on('child_added', data => {
             this.setState(prevState=>({
@@ -161,6 +253,7 @@ class  ItemList extends React.Component{
             }),()=>console.log('child added'))
           });
 
+          
           listRef.on('child_removed',data =>{
             this.setState(prevState=>({
                 items:_.filter(prevState.items,(item,i)=>{
@@ -183,6 +276,25 @@ class  ItemList extends React.Component{
 
 
     }
+    componentWillUnmount() {
+       listRef.remove();
+      }
+      componentWillMount(){
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+             
+              this.setState({
+                  user:user,
+                  photoURL:user.photoURL,
+                  username:user.displayName,
+                  email:user.email,
+                  logged:true
+              });
+            } else {
+             
+            }
+          }.bind(this));
+      }
     
     filter = (f)=>{
         listRef.once('value').then((snapshot)=>{
@@ -227,8 +339,6 @@ class  ItemList extends React.Component{
     };
 
     onDelete = (item)=>{
-       
-        
         listRef.child(item).once('value').then(function(snapshot) {
             console.log(snapshot.val());
            
@@ -254,17 +364,22 @@ class  ItemList extends React.Component{
     };
     selectAll =()=>{     
         let temp = this.state.items.slice();
-
-       
         _.each(temp,(element)=>{
-            listRef.child(element.id).update({done:! this.state.selected ?false:true});
+            listRef.child(element.id).update({done:true});
         });
-
-        
     };
     render() {
     return (
-    <Grid  >       
+    <Grid  >  
+         <MuiThemeProvider >     
+         <AppBar
+         iconElementRight={this.state.logged ? <Logged click={this.logOut}/>: <Login click={this.logIn}/>}
+         title={this.state.username}
+         iconElementLeft={<Avatar src={this.state.photoURL}
+         
+          />}
+       />
+        </MuiThemeProvider >
         <Form selected={this.state.selected} selectAll={this.selectAll} onSubmit={this.addNewitem}/>
         <Row center={'xs'} >
             <Col   xs={12} sm={8} md={6} lg={5}>
@@ -311,7 +426,8 @@ class  ItemList extends React.Component{
                     </Toolbar>
                 </MuiThemeProvider >
             </Col>
-        </Row>   
+        </Row>  
+        
     </Grid>
     );
   }
